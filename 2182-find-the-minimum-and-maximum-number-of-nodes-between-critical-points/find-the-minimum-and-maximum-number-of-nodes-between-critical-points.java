@@ -10,7 +10,12 @@
  */
 class Solution {
     public int[] nodesBetweenCriticalPoints(ListNode head) {
-        ArrayList<Integer> criticalIndex=new ArrayList<>();
+
+        int firstCI=-1;
+        int prevCI=-1;
+
+
+        int minD=Integer.MAX_VALUE;
 
         int index=1;
         ListNode prev=head;
@@ -21,25 +26,25 @@ class Solution {
             boolean isMin= curr.val<prev.val && curr.val<next.val;
 
             if(isMax||isMin){
-                criticalIndex.add(index);
+                if(firstCI==-1){
+                    firstCI=index;
+                }
+                else{
+                    int d=index-prevCI;
+                    minD=Math.min(minD,d);
+                }
+                prevCI=index;
             }
             prev=curr;
             curr=next;
             index++;
         }
 
-        if(criticalIndex.size()<2){
+        if(firstCI==prevCI){
             return new int[]{-1,-1};
         }
 
-        int minD=Integer.MAX_VALUE;
-
-        for(int i=1;i<criticalIndex.size();i++){
-            int d= criticalIndex.get(i)-criticalIndex.get(i-1);
-            minD=Math.min(minD,d);
-        }
-
-        int maxD= criticalIndex.get(criticalIndex.size()-1)-criticalIndex.get(0);
+        int maxD= prevCI-firstCI;
 
         return new int[]{minD,maxD};
 
